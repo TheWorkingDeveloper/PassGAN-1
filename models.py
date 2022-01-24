@@ -21,12 +21,12 @@ def Generator(n_samples, seq_len, layer_dim, output_dim, prev_outputs=None):
     output = ResBlock('Generator.4', output, layer_dim)
     output = ResBlock('Generator.5', output, layer_dim)
     output = lib.ops.conv1d.Conv1D('Generator.Output', layer_dim, output_dim, 1, output)
-    output = tf.transpose(output, [0, 2, 1])
+    output = tf.transpose(a=output, perm=[0, 2, 1])
     output = softmax(output, output_dim)
     return output
 
 def Discriminator(inputs, seq_len, layer_dim, input_dim):
-    output = tf.transpose(inputs, [0,2,1])
+    output = tf.transpose(a=inputs, perm=[0,2,1])
     output = lib.ops.conv1d.Conv1D('Discriminator.Input', input_dim, layer_dim, 1, output)
     output = ResBlock('Discriminator.1', output, layer_dim)
     output = ResBlock('Discriminator.2', output, layer_dim)
@@ -42,8 +42,8 @@ def softmax(logits, num_classes):
         tf.nn.softmax(
             tf.reshape(logits, [-1, num_classes])
         ),
-        tf.shape(logits)
+        tf.shape(input=logits)
     )
 
 def make_noise(shape):
-    return tf.random_normal(shape)
+    return tf.random.normal(shape)
